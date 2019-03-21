@@ -12,15 +12,26 @@
     <div class="container">
       <div class="jumbotron ticket-form">
         <form id="ticket-giver">
-          <div class="form-group">
-            <label for="movie-selector">Select a movie you wish to view:</label>
-            <select id="movie-selector">
+          <div id="form-stage-one">
+            <div class="form-group">
+              <label for="movie-selector">Select a movie you wish to view:</label>
+              <select id="movie-selector">
 
-            </select>
+              </select>
+            </div>
+            <!-- <button type="button" ></button> -->
+          </div>
+          <div id="form-stage-two">
+            <div class="form-group">
+              <label for="viewer-age-input">Please state your age here:</label>
+              <input type="number" id="viewer-age-input" min="0" value="0" required>
+            </div>
           </div>
           <div class="form-group">
-            <label for="viewer-age-input">Please state your age here:</label>
-            <input type="number" id="viewer-age-input" min="0" value="0" required>
+            <label for="movie-times">Select a time for the movie you wish to view.</label>
+            <select id="movie-times">
+
+            </select>
           </div>
           <button type="submit" class="btn">Purchase Ticket</button>
         </form>

@@ -82,16 +82,17 @@ MovieList.prototype.appendToList = function () {
   var movieIDFocus = 0;
   movieListToAppend.forEach(function(movie) {
     movieIDFocus += 1;
-    $("select#movie-selector").append("<option value='"+movieIDFocus+"'>"+movie.name+" ("+movie.rating+")");
+    $("select#movie-selector").append("<option value='"+movieIDFocus+"'>"+movie.name+" ("+movie.rating+")</option>");
   });
 };
 
 var currentMovieList = new MovieList();
 
-function Movie(name, releaseYear, rating) {
+function Movie(name, releaseYear, rating, times) {
   this.name = name,
   this.releaseYear = releaseYear,
-  this.rating = rating
+  this.rating = rating,
+  this.times = times
 }
 
 Movie.prototype.ratingSafeAge = function () {
@@ -116,15 +117,17 @@ Movie.prototype.ratingSafeAge = function () {
   }
 };
 
-var movieOne = new Movie("TestMovieA", 2015, "G");
-var movieTwo = new Movie("TestMovieB", 2012, "PG-13");
-var movieThree = new Movie("TestMovieC", 2019, "R");
+var movieOne = new Movie("TestMovieA", 2015, "G", ["12:30 PM", "3:30 PM", "5:45 PM", "8:45 PM"]);
+var movieTwo = new Movie("TestMovieB", 2012, "PG-13", ["1:45 PM", "4:45 PM", "7:30 PM", "9:30 PM"]);
+var movieThree = new Movie("TestMovieC", 2019, "R", ["2:15 PM", "5:15 PM", "8:00 PM"]);
 
 function Ticket(selectedMovie, viewerAge) {
   this.selectedMovie = selectedMovie,
   this.viewerAge = viewerAge
   //this.movieTime = movieTime
 }
+
+
 
 Ticket.prototype.determineSafeToView  = function () {
   var ageCheck = this.viewerAge;
@@ -159,6 +162,36 @@ function confirmPurchase(ticket) {
   else {
     return true;
   }
+}
+
+function findActiveMovieSelection() {
+  return $("select#movie-selector").val();
+}
+
+function advanceForm() {
+  $("select#movie-times").empty();
+  var movieToRead = findActiveMovieSelection();
+  var timeHour = 0;
+  movieToRead.times.forEach(function(time) {
+    var timeSplit = time.split(":");
+    var timeFocus = timeSplit[0];
+    if (timeFocus == "12") {
+      timeHour = 0;
+      $("select#movie-times").append("<option value='"+timeHour"'>"+time+"</option>");
+    }
+    else {
+      timeHour = timeFocus[0];
+      $("select#movie-times").append("<option value='"+timeHour"'>"+time+"</option>");
+    }
+  });
+}
+
+function revertForm() {
+
+}
+
+function resetForm() {
+
 }
 
 $(document).ready(function() {
