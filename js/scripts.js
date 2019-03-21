@@ -97,15 +97,16 @@ function Movie(name, releaseYear, rating) {
 Movie.prototype.ratingSafeAge = function () {
   var ratingAgeCheck = this.rating;
   var ratingToLower = ratingAgeCheck.toLowerCase();
+  console.log(ratingToLower);
   var minAge = 0;
-  if (ratingAgeCheck == "g") {
+  if (ratingToLower == "g") {
     return minAge;
   }
-  else if (ratingAgeCheck == "pg") {
+  else if (ratingToLower == "pg") {
     minAge = 7;
     return minAge;
   }
-  else if (ratingAgeCheck == "pg-13") {
+  else if (ratingToLower == "pg-13") {
     minAge = 13;
     return minAge;
   }
@@ -153,14 +154,16 @@ function confirmPurchase(ticket) {
     return false;
   }
   else if (checkWarning == 1) {
-    confirm("Are you sure that you wish to view this movie?");
+    return confirm("Are you sure that you wish to view this movie?");
   }
   else {
     return true;
   }
 }
 
-$(document).ready(function(){
+$(document).ready(function() {
+  var movieTicketsPurchased = 0;
+  var movieTicketRows = 0;
   currentMovieList.addMovieToList(movieOne);
   currentMovieList.addMovieToList(movieTwo);
   currentMovieList.addMovieToList(movieThree);
@@ -172,9 +175,23 @@ $(document).ready(function(){
     var ageOfAttendee = $("input#viewer-age-input").val();
     var pendingTicket = new Ticket(movieSelected, ageOfAttendee);
     var purchaseConfirmation = confirmPurchase(pendingTicket);
-    $("input#viewer-age-input").val("");
+    $("input#viewer-age-input").val("0");
     if (purchaseConfirmation) {
       currentTicketList.giveTicket(pendingTicket);
+      if ((movieTicketsPurchased % 4) == 0 || movieTicketsPurchased == 0) {
+        movieTicketRows += 1;
+        $("div#output-div").append("<div id='ticket-row"+movieTicketRows+"'></div>");
+      }
+      movieTicketsPurchased += 1;
+      $("div#ticket-row"+movieTicketRows).append(
+        "<div class='ticket-display col-md-3' id='ticket"+movieTicketsPurchased+"'>" +
+          "<h6>"+pendingTicket.selectedMovie.name+"</h6>" +
+          "<p>Rating: <span id='ticket-rating"+movieTicketsPurchased+"'></span></p>" +
+          "<p>Year of Release: <span id='ticket-year"+movieTicketsPurchased+"'></span></p>"+
+        "</div>"
+      );
+      $("span#ticket-rating"+movieTicketsPurchased).text(pendingTicket.selectedMovie.rating);
+      $("span#ticket-year"+movieTicketsPurchased).text(pendingTicket.selectedMovie.releaseYear);
     }
     else {
       return false;

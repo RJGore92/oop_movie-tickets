@@ -3,3 +3,8 @@
   border-radius: 10px;
   background-image: linear-gradient(silver, lightslategrey, silver);
 }
+
+.ticket-display {
+  border-radius: 8px;
+  border-style: double;
+}
