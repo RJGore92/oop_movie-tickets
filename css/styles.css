@@ -7,4 +7,10 @@
 .ticket-display {
   border-radius: 8px;
   border-style: double;
+  margin: 5px 25px;
+
+}
+
+#form-stage-two, #reset-button {
+  display: none;
 }

@@ -19,24 +19,29 @@
 
               </select>
             </div>
-            <!-- <button type="button" ></button> -->
+            <button type="button" class="btn" onclick="advanceForm()">Proceed</button>
           </div>
-          <div id="form-stage-two">
+          <div class="hidden-start" id="form-stage-two">
             <div class="form-group">
               <label for="viewer-age-input">Please state your age here:</label>
               <input type="number" id="viewer-age-input" min="0" value="0" required>
             </div>
-          </div>
-          <div class="form-group">
-            <label for="movie-times">Select a time for the movie you wish to view.</label>
-            <select id="movie-times">
+            <div class="form-group">
+              <label for="movie-times">Select a time for the movie you wish to view.</label>
+              <select id="movie-times">
 
-            </select>
+              </select>
+              <br>
+              <button type="button" class="btn" onclick="revertForm()">Reselect movie</button>
+              <button type="submit" class="btn">Purchase Ticket</button>
+            </div>
           </div>
-          <button type="submit" class="btn">Purchase Ticket</button>
         </form>
       </div>
       <div id="output-div">
+        <div class="hidden-start" id="reset-button">
+          <button type="button" class="btn" onclick="resetForm()">Purchase new ticket</button>
+        </div>
 
       </div>
     </div>

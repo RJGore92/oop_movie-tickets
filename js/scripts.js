@@ -121,10 +121,10 @@ var movieOne = new Movie("TestMovieA", 2015, "G", ["12:30 PM", "3:30 PM", "5:45 
 var movieTwo = new Movie("TestMovieB", 2012, "PG-13", ["1:45 PM", "4:45 PM", "7:30 PM", "9:30 PM"]);
 var movieThree = new Movie("TestMovieC", 2019, "R", ["2:15 PM", "5:15 PM", "8:00 PM"]);
 
-function Ticket(selectedMovie, viewerAge) {
+function Ticket(selectedMovie, viewerAge, movieTime) {
   this.selectedMovie = selectedMovie,
-  this.viewerAge = viewerAge
-  //this.movieTime = movieTime
+  this.viewerAge = viewerAge,
+  this.movieTime = movieTime
 }
 
 
@@ -165,33 +165,69 @@ function confirmPurchase(ticket) {
 }
 
 function findActiveMovieSelection() {
-  return $("select#movie-selector").val();
+  return currentMovieList.findMovie($("select#movie-selector").val());
 }
 
 function advanceForm() {
   $("select#movie-times").empty();
   var movieToRead = findActiveMovieSelection();
+  console.log(movieToRead);
   var timeHour = 0;
   movieToRead.times.forEach(function(time) {
     var timeSplit = time.split(":");
+    console.log(timeSplit);
     var timeFocus = timeSplit[0];
     if (timeFocus == "12") {
       timeHour = 0;
-      $("select#movie-times").append("<option value='"+timeHour"'>"+time+"</option>");
+      $("select#movie-times").append("<option value='"+timeHour+"'>"+time+"</option>");
     }
     else {
       timeHour = timeFocus[0];
-      $("select#movie-times").append("<option value='"+timeHour"'>"+time+"</option>");
+      $("select#movie-times").append("<option value='"+timeHour+"'>"+time+"</option>");
     }
   });
+  $("div#form-stage-one").slideToggle();
+  $("div#form-stage-two").slideToggle();
+}
+
+function printTime(timeVar) {
+  var movieSelected = findActiveMovieSelection();
+  var timesToRead = movieSelected.times;
+  var movieTimeVars = [];
+  timesToRead.forEach(function(time) {
+    var timeSplit = time.split(":");
+    var timeFocus = timeSplit[0];
+    movieTimeVars.push(timeFocus);
+  });
+  var targetTimeToRead = timeVar;
+  if(timeVar == 0){
+    timeVar = 12;
+  }
+  for (var i = 0; i < movieTimeVars.length; i++) {
+    if (timeVar == movieTimeVars[i]) {
+      return movieSelected.times[i];
+    }
+  }
+  return false;
 }
 
 function revertForm() {
+  $("select#movie-times").empty();
+  $("div#form-stage-one").slideToggle();
+  $("div#form-stage-two").slideToggle();
+}
 
+function submitToOutput() {
+  $("div#form-stage-two").slideToggle();
+  $("div.ticket-form").slideToggle();
+  $("div#reset-button").slideToggle();
 }
 
 function resetForm() {
-
+  $("select#movie-times").empty();
+  $("div#reset-button").slideToggle();
+  $("div#form-stage-one").slideToggle();
+  $("div.ticket-form").slideToggle();
 }
 
 $(document).ready(function() {
@@ -203,28 +239,33 @@ $(document).ready(function() {
   currentMovieList.appendToList();
   $("form#ticket-giver").submit(function(event) {
     event.preventDefault();
+    submitToOutput();
     var movieSelected = currentMovieList.findMovie($("select#movie-selector").val());
     console.log(movieSelected);
     var ageOfAttendee = $("input#viewer-age-input").val();
+    var timeSelected = $("select#movie-times").val();
     var pendingTicket = new Ticket(movieSelected, ageOfAttendee);
     var purchaseConfirmation = confirmPurchase(pendingTicket);
     $("input#viewer-age-input").val("0");
     if (purchaseConfirmation) {
       currentTicketList.giveTicket(pendingTicket);
-      if ((movieTicketsPurchased % 4) == 0 || movieTicketsPurchased == 0) {
+      movieTicketsPurchased++;
+      if (((movieTicketsPurchased - 1) % 3) == 0 || (movieTicketsPurchased - 1) == 0) {
         movieTicketRows += 1;
-        $("div#output-div").append("<div id='ticket-row"+movieTicketRows+"'></div>");
+        $("div#output-div").append("<div class='row' id='ticket-row"+movieTicketRows+"'></div>");
       }
-      movieTicketsPurchased += 1;
+      console.log(movieTicketsPurchased);
       $("div#ticket-row"+movieTicketRows).append(
-        "<div class='ticket-display col-md-3' id='ticket"+movieTicketsPurchased+"'>" +
+        "<div class='col-sm ticket-display' id='ticket"+movieTicketsPurchased+"'>" +
           "<h6>"+pendingTicket.selectedMovie.name+"</h6>" +
           "<p>Rating: <span id='ticket-rating"+movieTicketsPurchased+"'></span></p>" +
           "<p>Year of Release: <span id='ticket-year"+movieTicketsPurchased+"'></span></p>"+
+          "<p>Movie Time: <span id='ticket-time"+movieTicketsPurchased+"'></span></p>"+
         "</div>"
       );
       $("span#ticket-rating"+movieTicketsPurchased).text(pendingTicket.selectedMovie.rating);
       $("span#ticket-year"+movieTicketsPurchased).text(pendingTicket.selectedMovie.releaseYear);
+      $("span#ticket-time"+movieTicketsPurchased).text(printTime(timeSelected));
     }
     else {
       return false;
