@@ -88,11 +88,12 @@ MovieList.prototype.appendToList = function () {
 
 var currentMovieList = new MovieList();
 
-function Movie(name, releaseYear, rating, times) {
+function Movie(name, releaseYear, rating, times, prices) {
   this.name = name,
   this.releaseYear = releaseYear,
   this.rating = rating,
-  this.times = times
+  this.times = times,
+  this.prices = prices
 }
 
 Movie.prototype.ratingSafeAge = function () {
@@ -117,9 +118,13 @@ Movie.prototype.ratingSafeAge = function () {
   }
 };
 
-var movieOne = new Movie("TestMovieA", 2015, "G", ["12:30 PM", "3:30 PM", "5:45 PM", "8:45 PM"]);
-var movieTwo = new Movie("TestMovieB", 2012, "PG-13", ["1:45 PM", "4:45 PM", "7:30 PM", "9:30 PM"]);
-var movieThree = new Movie("TestMovieC", 2019, "R", ["2:15 PM", "5:15 PM", "8:00 PM"]);
+Movie.prototype.findPricesList = function () {
+  return this.prices;
+};
+
+var movieOne = new Movie("TestMovieA", 2015, "G", ["12:30 PM", "3:30 PM", "5:45 PM", "8:45 PM"], [["$11.00", "$11.50", "$11.00"], ["$11.00", "$14.00", "$11.00"]]);
+var movieTwo = new Movie("TestMovieB", 2012, "PG-13", ["1:45 PM", "4:45 PM", "7:30 PM", "9:30 PM"], [["$10.00", "$10.50", "10.00"], ["$10.00", "$13.00", "$10.00"]]);
+var movieThree = new Movie("TestMovieC", 2019, "R", ["2:15 PM", "5:15 PM", "8:00 PM"], [["$12.50", "$13.00", "$12.50"], ["$12.50", "$16.00", "$12.50"]]);
 
 function Ticket(selectedMovie, viewerAge, movieTime) {
   this.selectedMovie = selectedMovie,
@@ -190,6 +195,7 @@ function advanceForm() {
   $("div#form-stage-two").slideToggle();
 }
 
+
 function printTime(timeVar) {
   var movieSelected = findActiveMovieSelection();
   var timesToRead = movieSelected.times;
@@ -230,6 +236,51 @@ function resetForm() {
   $("div.ticket-form").slideToggle();
 }
 
+function printTicketTypeAndPrice(movieTarget, ticketNum, time, age) {
+  var movieToScan = movieTarget;
+  // var moviePrices =
+  console.log(movieToScan);
+  var timeToRead = time;
+  var ticketCounter = ticketNum;
+  var ageToRead = age;
+  var pricesToRead = [];
+  var finalPrice = "";
+  var movieTicketType = "";
+  if (timeToRead >= 4) {
+    pricesToRead = movieToScan.prices[1];
+    console.log(pricesToRead);
+    if (ageToRead < 11) {
+      movieTicketType = "Prime Time, Child's Ticket";
+      finalPrice = pricesToRead[0];
+    }
+    if (ageToRead >= 60) {
+      movieTicketType = "Prime Time, Senior's Ticket";
+      finalPrice = pricesToRead[2];
+    }
+    else {
+      movieTicketType = "Prime Time, Adult's Ticket";
+      finalPrice = pricesToRead[1];
+    }
+  }
+  else {
+    pricesToRead = movieToScan.prices[0];
+    if (ageToRead < 11) {
+      movieTicketType = "Matinee, Child's Ticket";
+      finalPrice = pricesToRead[0];
+    }
+    if (ageToRead >= 60) {
+      movieTicketType = "Matinee, Senior's Ticket";
+      finalPrice = pricesToRead[2];
+    }
+    else {
+      movieTicketType = "Matinee, Adult's Ticket";
+      finalPrice = pricesToRead[1];
+    }
+  }
+  $("span#ticket-type"+ticketCounter).text(movieTicketType);
+  $("span#ticket-cost"+ticketCounter).text(finalPrice);
+}
+
 $(document).ready(function() {
   var movieTicketsPurchased = 0;
   var movieTicketRows = 0;
@@ -244,13 +295,13 @@ $(document).ready(function() {
     console.log(movieSelected);
     var ageOfAttendee = $("input#viewer-age-input").val();
     var timeSelected = $("select#movie-times").val();
-    var pendingTicket = new Ticket(movieSelected, ageOfAttendee);
+    var pendingTicket = new Ticket(movieSelected, ageOfAttendee, timeSelected);
     var purchaseConfirmation = confirmPurchase(pendingTicket);
     $("input#viewer-age-input").val("0");
     if (purchaseConfirmation) {
       currentTicketList.giveTicket(pendingTicket);
       movieTicketsPurchased++;
-      if (((movieTicketsPurchased - 1) % 3) == 0 || (movieTicketsPurchased - 1) == 0) {
+      if (((movieTicketsPurchased - 1) % 2) == 0 || (movieTicketsPurchased - 1) == 0) {
         movieTicketRows += 1;
         $("div#output-div").append("<div class='row' id='ticket-row"+movieTicketRows+"'></div>");
       }
@@ -261,11 +312,14 @@ $(document).ready(function() {
           "<p>Rating: <span id='ticket-rating"+movieTicketsPurchased+"'></span></p>" +
           "<p>Year of Release: <span id='ticket-year"+movieTicketsPurchased+"'></span></p>"+
           "<p>Movie Time: <span id='ticket-time"+movieTicketsPurchased+"'></span></p>"+
+          "<p>Movie Type: <span id='ticket-type"+movieTicketsPurchased+"'></span></p>"+
+          "<p>Ticket Cost: <span id='ticket-cost"+movieTicketsPurchased+"'></span></p>"+
         "</div>"
       );
       $("span#ticket-rating"+movieTicketsPurchased).text(pendingTicket.selectedMovie.rating);
       $("span#ticket-year"+movieTicketsPurchased).text(pendingTicket.selectedMovie.releaseYear);
       $("span#ticket-time"+movieTicketsPurchased).text(printTime(timeSelected));
+      printTicketTypeAndPrice(movieSelected, movieTicketsPurchased, timeSelected, ageOfAttendee);
     }
     else {
       return false;
