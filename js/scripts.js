@@ -82,7 +82,7 @@ MovieList.prototype.appendToList = function () {
   var movieIDFocus = 0;
   movieListToAppend.forEach(function(movie) {
     movieIDFocus += 1;
-    $("select#movie-selector").append("<option value='"+movieIDFocus+"'>"+movie.name+" ("+movie.rating+")</option>");
+    $("select#movie-selector").append("<option value='"+movieIDFocus+"'>"+movie.name+" ("+movie.rating+", "+movie.releaseYear+")</option>");
   });
 };
 
@@ -253,7 +253,7 @@ function printTicketTypeAndPrice(movieTarget, ticketNum, time, age) {
       movieTicketType = "Prime Time, Child's Ticket";
       finalPrice = pricesToRead[0];
     }
-    if (ageToRead >= 60) {
+    else if (ageToRead >= 60) {
       movieTicketType = "Prime Time, Senior's Ticket";
       finalPrice = pricesToRead[2];
     }
@@ -268,7 +268,7 @@ function printTicketTypeAndPrice(movieTarget, ticketNum, time, age) {
       movieTicketType = "Matinee, Child's Ticket";
       finalPrice = pricesToRead[0];
     }
-    if (ageToRead >= 60) {
+    else if (ageToRead >= 60) {
       movieTicketType = "Matinee, Senior's Ticket";
       finalPrice = pricesToRead[2];
     }
@@ -290,7 +290,6 @@ $(document).ready(function() {
   currentMovieList.appendToList();
   $("form#ticket-giver").submit(function(event) {
     event.preventDefault();
-    submitToOutput();
     var movieSelected = currentMovieList.findMovie($("select#movie-selector").val());
     console.log(movieSelected);
     var ageOfAttendee = $("input#viewer-age-input").val();
@@ -298,7 +297,8 @@ $(document).ready(function() {
     var pendingTicket = new Ticket(movieSelected, ageOfAttendee, timeSelected);
     var purchaseConfirmation = confirmPurchase(pendingTicket);
     $("input#viewer-age-input").val("0");
-    if (purchaseConfirmation) {
+    if (purchaseConfirmation == true) {
+      submitToOutput();
       currentTicketList.giveTicket(pendingTicket);
       movieTicketsPurchased++;
       if (((movieTicketsPurchased - 1) % 2) == 0 || (movieTicketsPurchased - 1) == 0) {

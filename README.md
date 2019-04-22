@@ -21,10 +21,26 @@ No known bugs are present in this project.
 
 ## Assignment Specs
 
-
+* The starting status of the project's application provides a basic list of "movies" to pick from upon opening the page, each with values and information reference for a specific Movie object.  Upon selection of a movie, the second stage form opens up with an input for a user's age and a list of times dependent on the "Movie's" times property.
+* After a movie is selected, the user will be prompted to select a time and input their age.  Depending on the selected movie's rating and the user's input age, the page will respond in one of three ways.  Times available to select vary based on movie selected and will help determine the final cost of the movie as well based on age and time selected in combination.  The year of the movie, while appearing as flavor, also has a minor determining factor for the movie's price as well.  As for the page's responses, they will be listed in the input and output examples based on movie rating.
+* Upon final submission of a form in a proper setting where the movie is determined safe to view for the ticket buyer or is given permission in the event age is equal to the minimum suggested rating, the ticket details will be printed beneath where the form was established and a button to reopen the form for another ticket purchase will be placed above all tickets that are bought.  This button will disappear temporarily until the proper completion of a new ticket purchase.
 
 ####  Inputs and outputs (examples):
 
+* Based on user input and user rating, a user will receive the following responses.  Bear in mind that the ratings to numbered age suggestion is as follows:  G = 0 (all audiences), PG = 7, PG-13 = 13, R = 21.  The page also prints ticket information on any returning value of "true".
+1. If the age input is less than the minimum rating, the form will fail to submit (return false) and the page will inform the user that the movie is not safe, suggesting that the user pick a different movie instead.
+  * age < 13 for PG-13 movie, return false
+  * age < 21 for R movie, return false
+2. If the user's age input is equal to the minimum suggested age number for the rating of the respective movie that was selected, the user will be asked to confirm that this is the movie they want to see with a confirm interface after telling them that the movie will be barely suitable for their age.
+  * age = 13 for PG-13 movie, user asked to confirm.  returns true if OK is clicked, false otherwise.
+3. If the user's age input is greater than the minimum suggested age for the selected movie's rating, the page will respond with an alert box saying that the movie is safe to view and to grab snacks and drinks before the movie for good measure.
+  * age > 13 for a PG-13 movie, return true.
+
+
+* The purchase price of a ticket is dependent on the movie selected and is predefined to an extent within an array group.  The arrays within the array represent different time groups for prices and each price within is a respective ticket price for certain ages.  The older the movie, the cheaper it is, and if the ticket buyer is a child or senior ticket, the ticket price becomes cheaper still compared to newer movies with standard adult pricing.  Examples of this can be summed up as such.
+1. Movie three (year 2019 release) most expensive, adult fare highest price and senior price discounted.
+2. Movie two (year 2012 release for concept) least expensive, adult fare highest out of all costs for this movie, senior and child tickets at common reduced cost.
+3. Movie one (2015 release year for concept) middle-of-the-road for cost, adult fare highest relative for movie, senior and children costs reduced.
 
 
 ## Technologies Used
